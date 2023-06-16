@@ -12,7 +12,8 @@ d = {"message": "hello"}
 
 muqu.push(queue_name, d)
 m = muqu.fetch(queue_name)
-print(m)
+print("got message")
+print(m["data"])
 if m:
     muqu.remove(queue_name, m)
 muqu.delete_queue(queue_name)

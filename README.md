@@ -6,7 +6,7 @@ It is much more limited than SQS, but you will have to make fewer choices and wo
 
 It is designed to create scalable architecture with the power of AWS SQS (unlimited storage), but without the complexity (no policies).
 
-Every queue is FIFO. Every queue has an associated dead-letter queue where items go after too many failures. Every queue has a name. Everything that goes on the queue is in JSON format. 
+Every queue is FIFO. Every queue has an associated dead-letter queue where items go after too many failures. Every queue has a name. Everything that goes on the queue is JSON, but you interact with them mainly as Python dictionaries.
 
 You can have a server / producer putting work on a queue and worker taking items off the queue. To scale up, just add more worker processes (e.g. Python scripts with while True loops that perform "get" operations and run in TMUX panes on a $5 VPS).
 
@@ -16,35 +16,52 @@ You can have a server / producer putting work on a queue and worker taking items
 * Create an IAM user
 * Configure credentials
 
+## Usage
+
+The code below creates a queue, pushes an item to it, gets the item off it, and deletes the queue.
+
+Usually, you would create the queue once-off, push items onto the queue from your server code and get/remove items with one or more worker scripts.
+
 ```python
-import mu
-muqu.connect(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY) # pass credentials in explicitly
+from muqu import MuQu
+
+# for demo purposes only
+# rather grab them from environment variables or a .env file
+aws_access_key_id = ""
+aws_secret_access_key = ""
+
+muqu = MuQu(aws_access_key_id, aws_secret_access_key)
+
+queue_name = "my-queue"
+muqu.create_queue(queue_name)
+
+d = {"message": "hello"}
+
+muqu.push(queue_name, d)
+m = muqu.fetch(queue_name)
+print(m)
+if m:
+    muqu.remove(queue_name, m)
+muqu.delete_queue(queue_name)
 ```
 
 ## Create a queue
 
 ```python
 # create a queue with a name
-muqu.create("work_to_be_done")
+muqu.create("my-queue")
 ```
 ## Put an item on the queue
 
 ```python
-# prepare data
-import json
-d = {url: "https://google.com"}
-data = json.dumps(d)
-
-# add work to the queue
-muqu.push("work_to_be_done", data)
+data = {"url": "https://google.com"}
+muqu.push("my-queue", data)
 ```
 
 ## Get an item off the queue
 
 ```python
-import json
-data = muqu.get("work_to_be_done")
-d = json.loads(data)
+data = muqu.get("my-queue")
 ```
 
 ## Delete an item from the queue

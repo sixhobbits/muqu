@@ -75,10 +75,9 @@ class MuQu:
             meta = {"receipt_handle": message.receipt_handle}
             m = {"data": data, "meta": meta}
             print("fetched message", m)
-            return json.dumps(m)
+            return m
 
     def remove(self, queue_name, message):
-        message = json.loads(message)
         queue_name += ".fifo"
         queue = self.sqs.get_queue_by_name(QueueName=queue_name)
         message = queue.Message(message["meta"]["receipt_handle"])
