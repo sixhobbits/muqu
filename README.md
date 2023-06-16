@@ -46,39 +46,46 @@ if m:
 muqu.delete_queue(queue_name)
 ```
 
-## Create a queue
+### Create a queue
 
 ```python
 # create a queue with a name
-muqu.create("my-queue")
+muqu.create_queue("my-queue")
 ```
-## Put an item on the queue
+### Put an item on the queue
 
 ```python
 data = {"url": "https://google.com"}
 muqu.push("my-queue", data)
 ```
 
-## Get an item off the queue
+### Get an item off the queue
 
 ```python
-data = muqu.get("my-queue")
+message = muqu.fetch("my-queue")
+
+# note that your passed message is in a "data" subkey as the 
+# message object also needs to store some metadata.
+print(message["data"])
 ```
 
-## Delete an item from the queue
-muqu.delete(data)
+### Delete an item from the queue
 
-## Peek at a queue
+```python
+muqu.remove("my-queue", data)
+```
+
+### Peek at a queue
 
 ```python
 # get an item but immediately make it visible to real workers again
-data = muqu.peek("work_to_be_done")
+data = muqu.peek("my-queue")
 ```
 
-## Delete a queue
+### Delete a queue
 
 ```python
 # delete the queue, not data from it
-muqu.delete("work_to_be_done")
+muqu.delete_queue("my-queue")
 ```
 
