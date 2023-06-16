@@ -5,7 +5,7 @@ aws_secret_access_key = ""
 
 muqu = MuQu(aws_access_key_id, aws_secret_access_key)
 
-queue_name = "test-queue-2"
+queue_name = "test-queue-3"
 muqu.create_queue(queue_name)
 
 d = {"message": "hello"}
